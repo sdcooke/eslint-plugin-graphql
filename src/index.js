@@ -4,6 +4,7 @@ import {
   validate,
   buildClientSchema,
   specifiedRules as allGraphQLValidators,
+  findDeprecatedUsages,
 } from 'graphql';
 
 import {
@@ -231,7 +232,7 @@ function handleTemplateTag(node, context, schema, env, validators) {
     return;
   }
 
-  const validationErrors = schema ? validate(schema, ast, validators) : [];
+  const validationErrors = schema ? [...validate(schema, ast, validators), ...findDeprecatedUsages(schema, ast)] : [];
   if (validationErrors && validationErrors.length > 0) {
     context.report({
       node,
